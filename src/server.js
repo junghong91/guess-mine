@@ -1,11 +1,13 @@
 import { join } from "path";
 import express from "express";
 import socketIO from "socket.io";
+import logger from "morgan";
 
-const PORT = 3000;
+const PORT = 4000;
 const app = express();
 app.set("view engine", "pug");
 app.set("views", join(__dirname, "views")); // __dirname: C:\Users\지애리\Desktop\Nomadcoders\guess-mine\src
+app.use(logger("dev"));
 app.use(express.static(join(__dirname, "static"))); // front end 관련 파일을 static 에 넣는다.
 app.get("/", (req, res) => res.render("home"));
 
@@ -20,4 +22,17 @@ const handleListening = () => {
 const server = app.listen(PORT, handleListening); // trafic 이 다르기 때문에, 같은 포트에서 작업한다.
 
 // socketIO --> server 와 client 가 동시에 될 수 있다.
-const io = socketIO(server); // localhost:3000/socket.io/socket.io.js  <- To make socketIO frontend와 socketIO backend communicate each other
+// 위에서 만든 server 를 socketIO에 전달하는 과정. ('io' listen all the event)
+const io = socketIO.listen(server); // localhost:3000/socket.io/socket.io.js  <- To make socketIO frontend와 socketIO backend communicate each other
+
+let sockets = [];
+
+// connection 의 시작점(entry point)
+io.on("connection", socket => {
+  // sockets.push(socket.id);
+  // setTimeout(() => socket.emit("hello"), 5000); // server 가 event를 emit 한다.
+  // setTimeout(() => socket.broadcast.emit("hello"), 5000); // broadcast 는 첫번째로 접속한 client가 제외된다.
+  socket.on("helloGuys", () => console.log("The client said hello"));
+});
+
+// setInterval(() => console.log(sockets), 1000); // socket이 어떻게 생겼는지...
