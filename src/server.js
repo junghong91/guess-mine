@@ -14,4 +14,10 @@ const handleListening = () => {
   // console.log(__dirname); // C:\Users\지애리\Desktop\Nomadcoders\guess-mine\src
 };
 
-app.listen(PORT, handleListening);
+// app.listen(PORT, handleListening); // 기존의 방식
+
+// express server 위에 다른 server를 올리기(Using SocketIO)
+const server = app.listen(PORT, handleListening); // trafic 이 다르기 때문에, 같은 포트에서 작업한다.
+
+// socketIO --> server 와 client 가 동시에 될 수 있다.
+const io = socketIO(server); // localhost:3000/socket.io/socket.io.js  <- To make socketIO frontend와 socketIO backend communicate each other
