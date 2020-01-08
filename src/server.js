@@ -34,13 +34,15 @@ io.on("connection", socket => {
   // setTimeout(() => socket.broadcast.emit("hello"), 5000); // broadcast 현재 접속한 client가 제외된다.
   socket.on("newMessage", ({ message }) => {
     // console.log(message);
+    console.log(socket);
     socket.broadcast.emit("messageNotif", {
       message,
       nickname: socket.nickname || "Anonymous"
     }); // message와 nickname 은 socket 객체에 들어있다.
   });
   socket.on("setNickname", ({ nickname }) => {
-    socket.nickname = nickname;
+    console.log(socket);
+    socket.nickname = nickname; // socket 객체 안에 nickname 변수를 만들어서 저장.
   });
 });
 

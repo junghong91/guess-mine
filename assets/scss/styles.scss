@@ -1,0 +1,16 @@
+@import "body";
+
+$color: red;
+
+@keyframes sexy {
+  from {
+    color: red;
+  }
+  to {
+    color: blue;
+  }
+}
+
+body {
+  position: sticky;
+}
