@@ -3,7 +3,8 @@
 // server 파일과, socketController.js 파일에서는 같은 폴더에 들어있기 때문에 import 해서 사용할 수 있다.
 
 const events = {
-  setNickname: "setNickname"
+  setNickname: "setNickname",
+  newUser: "newUser"
 };
 
 export default events;

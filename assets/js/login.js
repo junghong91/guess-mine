@@ -1,3 +1,5 @@
+import { initSockets } from "./sockets";
+
 const body = document.querySelector("body");
 const loginForm = document.getElementById("jsLogin");
 
@@ -10,8 +12,9 @@ const nickname = localStorage.getItem(NICKNAME);
 
 const login = nickname => {
   // const socket = io("/"); // socket connection
-  window.socket = io("/"); // 모든 파일에서 window를 통해서 socket에 접근할 수 있다.
-  window.socket.emit(window.events.setNickname, { nickname }); // window.events.setNickname 이벤트("nickname")로 nickname 전달
+  const socket = io("/"); // 모든 파일에서 window를 통해서 socket에 접근할 수 있다.
+  socket.emit(window.events.setNickname, { nickname }); // window.events.setNickname 이벤트("nickname")로 nickname 전달
+  initSockets(socket);
 };
 
 if (nickname === null) {
