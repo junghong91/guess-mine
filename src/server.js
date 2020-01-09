@@ -3,6 +3,7 @@ import express from "express";
 import socketIO from "socket.io";
 import logger from "morgan";
 import socketController from "./socketController";
+import events from "./event";
 
 const PORT = 4000;
 const app = express();
@@ -10,7 +11,10 @@ app.set("view engine", "pug");
 app.set("views", join(__dirname, "views")); // __dirname: C:\Users\지애리\Desktop\Nomadcoders\guess-mine\src
 app.use(logger("dev"));
 app.use(express.static(join(__dirname, "static"))); // front end 관련 파일을 static 에 넣는다.
-app.get("/", (req, res) => res.render("home"));
+app.get(
+  "/",
+  (req, res) => res.render("home", { events: JSON.stringify(events) }) // event 를 pug 파일에서 공유한다
+);
 
 const handleListening = () => {
   console.log(`Server Running: http://localhost:${PORT}`);
