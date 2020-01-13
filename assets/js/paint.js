@@ -1,3 +1,5 @@
+import { getSocket } from "./sockets";
+
 const canvas = document.getElementById("jsCanvas");
 const ctx = canvas.getContext("2d"); // canvas를 pixel 단위로 다루기 위해
 const colors = document.getElementsByClassName("jsColor");
@@ -6,10 +8,10 @@ const mode = document.getElementById("jsMode");
 const saveBtn = document.getElementById("jsSave");
 
 const INITIAL_COLOR = "#2c2c2c";
+const CANVAS_SIZE = 700;
 
-// for the Pixel Maniplation (canvas 픽셀의 크기를 지정)
-canvas.width = canvas.offsetWidth;
-canvas.height = canvas.offsetHeight;
+canvas.width = CANVAS_SIZE;
+canvas.height = CANVAS_SIZE;
 
 ctx.fillStyle = "white";
 ctx.fillRect(0, 0, canvas.width, canvas.height); // canvas 의 배경 default color 지정
@@ -24,17 +26,36 @@ let filling = false;
 const stopPainting = () => (painting = false);
 const startPainting = () => (painting = true);
 
+const beginPath = (x, y) => {
+  ctx.beginPath(); // path 는 line (현재 마우스 위치가 starting point) , click 하면 path 가 만들어지지 않는다.
+  ctx.moveTo(x, y);
+};
+
+const strokePath = (x, y, color = null) => {
+  let currentColor = ctx.strokeStyle;
+  if (color !== null) {
+    ctx.strokeStyle = color;
+  }
+  ctx.lineTo(x, y); // previous position 에서 현재 위치까지 선을 잇는다
+  ctx.stroke(); // stroke the current sub-path with the current stroke style (획을 긋는것)
+  ctx.strokeStyle = currentColor;
+};
+
 const onMouseMove = event => {
   const x = event.offsetX;
   const y = event.offsetY;
   if (!painting) {
     // console.log("creating path in ", x, y);
-    ctx.beginPath(); // path 는 line (현재 마우스 위치가 starting point) , click 하면 path 가 만들어지지 않는다.
-    ctx.moveTo(x, y);
+    beginPath(x, y);
+    getSocket().emit(window.events.beginPath, { x, y }); // Emitting...
   } else {
-    // console.log("creating line in ", x, y);
-    ctx.lineTo(x, y); // previous position 에서 현재 위치까지 선을 잇는다
-    ctx.stroke(); // stroke the current sub-path with the current stroke style (획을 긋는것)
+    strokePath(x, y);
+    getSocket().emit(window.events.strokePath, {
+      // emit 을 할때, xy좌표와, line의 color를 전송
+      x,
+      y,
+      color: ctx.strokeStyle
+    }); // Emitting...
   }
 };
 
@@ -59,9 +80,19 @@ const handleModeClick = () => {
   }
 };
 
+const fill = (color = null) => {
+  let currentColor = ctx.fillStyle;
+  if (color !== null) {
+    ctx.fillStyle = color;
+  }
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = currentColor;
+};
+
 const handleCanvasClick = () => {
   if (filling) {
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    fill();
+    getSocket().emit(window.events.fill, { color: ctx.fillStyle });
   }
 };
 
@@ -103,3 +134,7 @@ if (mode) {
 if (saveBtn) {
   saveBtn.addEventListener("click", handleSaveClick);
 }
+
+export const handleBeganPath = ({ x, y }) => beginPath(x, y);
+export const handleStrokedPath = ({ x, y, color }) => strokePath(x, y, color);
+export const handleFilled = ({ color }) => fill(color);
