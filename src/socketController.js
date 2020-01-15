@@ -1,12 +1,24 @@
 import events from "./event";
+import { chooseWord } from "./words";
 
 let sockets = []; // 접속하는 user 의 nickname 을 넣을 변수
+let inProgress = false;
+let word = null;
+
+const chooseLeader = () => sockets[Math.floor(Math.random() * sockets.length)]; // 0 ~ socket.length 사이의 random int
 
 const socketController = (socket, io) => {
   const broadcast = (event, data) => socket.broadcast.emit(event, data); // socket.broadcast.emit(events.newUser, { nickname }); 이부분을 함수로...
   const superBroadcast = (event, data) => io.emit(event, data); // io.emit(event sent to all connected client)
   const sendPlayerUpdate = () =>
     superBroadcast(events.playerUpdate, { sockets });
+  const startGame = () => {
+    if (inProgress === false) {
+      inProgress = true;
+      const leader = chooseLeader();
+      word = chooseWord();
+    }
+  };
 
   socket.on(events.setNickname, ({ nickname }) => {
     socket.nickname = nickname;
@@ -14,6 +26,7 @@ const socketController = (socket, io) => {
     sockets.push({ id: socket.id, points: 0, nickname: nickname });
     broadcast(events.newUser, { nickname });
     sendPlayerUpdate();
+    startGame();
   });
 
   socket.on(events.disconnect, () => {
