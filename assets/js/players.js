@@ -5,6 +5,7 @@ import {
   showControls,
   resetCanvas
 } from "./paint";
+import { disableChat, enableChat } from "./chat";
 
 const board = document.getElementById("jsPBoard");
 const notifs = document.getElementById("jsNotifs");
@@ -24,17 +25,22 @@ const setNotifs = text => {
 };
 
 export const handlePlayerUpdate = ({ sockets }) => addPlayers(sockets);
+
+// User who is Not Leader
 export const handleGameStarted = () => {
   setNotifs(""); // game 시작될때, reset
   // disable canvas event
   disableCanvas();
   // hide the canvas controlls
   hideControls();
+  enableChat();
 };
 
+// Uer Who is Leader
 export const handleLeaderNotif = ({ word }) => {
   enableCanvas();
   showControls();
+  disableChat(); // leader can't send messages
   setNotifs(`You are the leader, paint: ${word}`);
 };
 
@@ -44,3 +50,5 @@ export const handleGameEnded = () => {
   hideControls();
   resetCanvas();
 };
+
+export const handleGameStarting = () => setNotifs("Game will start soon...");
