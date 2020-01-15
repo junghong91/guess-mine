@@ -32,11 +32,12 @@
   "scripts": {
     "dev:server": "nodemon --exec babel-node src/server --ignore assets/ --ignore src/static",
     "dev:assets": "gulp",
+    "build:assets": "gulp",
+    "build:server": "babel src --out-dir build --ignore 'src/static'",
     "copyAll": "cp -R src/static build && cp -R src/views build",
-    "build": "npm run build:server && npm run build:assets && npm run copyAll",
+    "build": "npm run build:server && npm run copyAll",
     "prebuild": "rm -rf build",
-    "tunnel": "lt --port 4000",
-    "start": "PRODUCTION=true node build/init.js",
+    "start": "node build/server",
     "prestart": "npm run build"
   },
   "devDependencies": {
