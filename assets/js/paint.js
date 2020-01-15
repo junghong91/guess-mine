@@ -86,7 +86,7 @@ const fill = (color = null) => {
     ctx.fillStyle = color;
   }
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = currentColor;
+  ctx.fillStyle = currentColor; // 원래 내가 선택해 놓은 color 유지
 };
 
 const handleCanvasClick = () => {
