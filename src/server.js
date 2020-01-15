@@ -5,7 +5,7 @@ import logger from "morgan";
 import socketController from "./socketController";
 import events from "./event";
 
-const PORT = process.env.PORT || 4000;
+const PORT = 3300;
 const app = express();
 app.set("view engine", "pug");
 app.set("views", join(__dirname, "views")); // __dirname: C:\Users\지애리\Desktop\Nomadcoders\guess-mine\src
