@@ -7,7 +7,7 @@ let sockets = []; // 접속하는 user 의 nickname 을 넣을 변수
 let inProgress = false;
 let word = null;
 let leader = null;
-let timeout = null; // setTimeout 의 id 값을 저장하는 변수
+let timeout = null; // setTimeout 의 id 값을 저장 변수
 
 const chooseLeader = () => sockets[Math.floor(Math.random() * sockets.length)]; // 0 ~ socket.length 사이의 random int
 
